@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Calculus for Machine Learning & Data Science</title>
+    <title>Calculus for Machine Learning & Deep Learning | Interactive Course</title>
+    <meta name="description" content="Master calculus for ML, DL, and Data Science with interactive visualizations, Python examples, and real-world applications.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -14,7 +15,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <h1>Calculus for ML/DL/DS</h1>
+                <h1>∂ Calculus ML</h1>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="active">Home</a></li>
@@ -38,46 +39,74 @@
     <header class="hero">
         <div class="hero-content">
             <h1>Master Calculus for Machine Learning</h1>
-            <p>A comprehensive, rigorous course with interactive visualizations, Python code, and real-world ML/DL/DS applications</p>
-            <a href="#course-overview" class="cta-button">Start Learning</a>
+            <p class="subtitle">
+                A rigorous, interactive course with stunning visualizations, Python code, and direct connections to backpropagation, gradient descent, and modern AI.
+            </p>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">Comprehensive Topics</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Interactive Visualizations</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">Code Examples</span>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="#course-overview" class="cta-button">Start Learning</a>
+                <a href="ml-applications.html" class="cta-button secondary">ML Applications</a>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <section id="course-overview" class="section">
-            <h2>Course Overview</h2>
-            <p>Welcome to this comprehensive calculus course designed specifically for aspiring researchers in Machine Learning, Deep Learning, and Data Science. This course provides:</p>
+            <h2>Why This Course?</h2>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 3rem;">
+                Every time a neural network learns, it's using calculus. Every gradient descent step, every backpropagation pass, every optimization algorithm—it's all built on the foundations of calculus. Master these concepts, and you'll truly understand how AI works.
+            </p>
 
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">📊</div>
                     <h3>Interactive Visualizations</h3>
-                    <p>Explore concepts with dynamic, interactive Plotly visualizations that you can manipulate and explore</p>
+                    <p>Manipulate 2D and 3D plots in real-time. See derivatives as slopes, gradients as arrows, and loss landscapes in full 3D glory.</p>
                 </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">🐍</div>
-                    <h3>Python Code Examples</h3>
-                    <p>Practical Python implementations using NumPy, SciPy, and ML libraries</p>
+                    <h3>Python Implementation</h3>
+                    <p>Complete implementations from scratch: backpropagation, gradient descent, neural networks—all using NumPy and PyTorch.</p>
                 </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">🧠</div>
-                    <h3>ML/DL Applications</h3>
-                    <p>Direct connections to gradient descent, backpropagation, optimization, and more</p>
+                    <h3>ML/DL Focus</h3>
+                    <p>Every concept tied directly to machine learning. Understand the math behind gradient descent, Adam optimizer, and loss functions.</p>
                 </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">✏️</div>
                     <h3>Exercises & Quizzes</h3>
-                    <p>Test your understanding with comprehensive exercises and interactive quizzes</p>
+                    <p>Test your understanding with comprehensive exercises, interactive quizzes with instant feedback, and detailed solutions.</p>
                 </div>
+
                 <div class="feature-card">
-                    <div class="feature-icon">📚</div>
+                    <div class="feature-icon">📐</div>
                     <h3>Rigorous Theory</h3>
-                    <p>Deep mathematical foundations with formal definitions and proofs</p>
+                    <p>Formal definitions, theorems with proofs, and the mathematical rigor needed for research-level understanding.</p>
                 </div>
+
                 <div class="feature-card">
                     <div class="feature-icon">🔗</div>
-                    <h3>External Resources</h3>
-                    <p>Curated links to papers, videos, and additional learning materials</p>
+                    <h3>Curated Resources</h3>
+                    <p>Links to the best textbooks, videos, research papers, and tools to deepen your understanding.</p>
                 </div>
             </div>
         </section>
@@ -88,10 +117,9 @@
                 <div class="module">
                     <h3><a href="limits.html">1. Limits and Continuity</a></h3>
                     <ul>
-                        <li>Intuitive understanding of limits</li>
-                        <li>Formal ε-δ definition</li>
-                        <li>Continuity and its properties</li>
-                        <li>L'Hôpital's rule</li>
+                        <li>Intuitive and formal (ε-δ) definitions</li>
+                        <li>L'Hôpital's rule for indeterminate forms</li>
+                        <li>Continuity and the Intermediate Value Theorem</li>
                         <li><strong>ML Application:</strong> Understanding convergence in optimization</li>
                     </ul>
                 </div>
@@ -99,11 +127,10 @@
                 <div class="module">
                     <h3><a href="derivatives.html">2. Derivatives</a></h3>
                     <ul>
-                        <li>Definition and geometric interpretation</li>
-                        <li>Differentiation rules</li>
-                        <li>Chain rule (crucial for backpropagation!)</li>
-                        <li>Implicit differentiation</li>
-                        <li>Higher-order derivatives</li>
+                        <li>Definition as instantaneous rate of change</li>
+                        <li>All differentiation rules (power, product, quotient)</li>
+                        <li><strong>The Chain Rule</strong> — foundation of backpropagation!</li>
+                        <li>Higher-order derivatives and concavity</li>
                         <li><strong>ML Application:</strong> Gradient descent and automatic differentiation</li>
                     </ul>
                 </div>
@@ -111,21 +138,20 @@
                 <div class="module">
                     <h3><a href="multivariable.html">3. Multivariable Calculus</a></h3>
                     <ul>
-                        <li>Partial derivatives</li>
-                        <li>Gradient, Jacobian, and Hessian</li>
-                        <li>Directional derivatives</li>
-                        <li>Taylor series in multiple dimensions</li>
-                        <li><strong>ML Application:</strong> Backpropagation, Newton's method, second-order optimization</li>
+                        <li>Partial derivatives and gradients</li>
+                        <li>Jacobian matrices for vector-valued functions</li>
+                        <li>Hessian matrices and second-order information</li>
+                        <li>Multivariable chain rule = backpropagation</li>
+                        <li><strong>ML Application:</strong> Training neural networks with millions of parameters</li>
                     </ul>
                 </div>
 
                 <div class="module">
                     <h3><a href="integration.html">4. Integration</a></h3>
                     <ul>
-                        <li>Riemann sums and definite integrals</li>
+                        <li>Riemann sums and the definite integral</li>
                         <li>Fundamental Theorem of Calculus</li>
-                        <li>Integration techniques</li>
-                        <li>Multiple integrals</li>
+                        <li>Integration techniques and applications</li>
                         <li><strong>ML Application:</strong> Probability distributions, expectation, KL divergence</li>
                     </ul>
                 </div>
@@ -133,95 +159,138 @@
                 <div class="module">
                     <h3><a href="series.html">5. Series and Sequences</a></h3>
                     <ul>
-                        <li>Convergence tests</li>
-                        <li>Power series</li>
-                        <li>Taylor and Maclaurin series</li>
+                        <li>Convergence tests for infinite series</li>
+                        <li>Power series and Taylor expansions</li>
                         <li>Fourier series introduction</li>
-                        <li><strong>ML Application:</strong> Function approximation, activation functions</li>
+                        <li><strong>ML Application:</strong> Function approximation and activation functions</li>
                     </ul>
                 </div>
 
                 <div class="module">
                     <h3><a href="vector-calculus.html">6. Vector Calculus</a></h3>
                     <ul>
-                        <li>Vector fields</li>
+                        <li>Vector fields and flow</li>
+                        <li>Divergence and curl operators</li>
                         <li>Line and surface integrals</li>
-                        <li>Divergence and curl</li>
-                        <li>Green's, Stokes', and Divergence theorems</li>
-                        <li><strong>ML Application:</strong> Understanding flow in neural networks</li>
+                        <li><strong>ML Application:</strong> Understanding gradient flow in deep networks</li>
                     </ul>
                 </div>
 
                 <div class="module highlighted">
-                    <h3><a href="ml-applications.html">7. Machine Learning Applications</a></h3>
+                    <h3><a href="ml-applications.html">7. Machine Learning Applications ⭐</a></h3>
                     <ul>
-                        <li>Gradient Descent and variants (SGD, Adam, RMSprop)</li>
-                        <li>Backpropagation algorithm</li>
-                        <li>Loss function optimization</li>
-                        <li>Convex optimization</li>
-                        <li>Regularization (L1, L2)</li>
-                        <li>Lagrange multipliers and constrained optimization</li>
-                        <li>Variational inference</li>
+                        <li><strong>Backpropagation:</strong> Complete implementation from scratch</li>
+                        <li><strong>Optimization:</strong> SGD, Momentum, RMSprop, Adam</li>
+                        <li><strong>Loss Functions:</strong> MSE, Cross-Entropy, and their derivatives</li>
+                        <li><strong>Regularization:</strong> L1, L2, and constrained optimization</li>
+                        <li><strong>Advanced:</strong> Second-order methods, convex optimization</li>
+                        <li>Full PyTorch deep learning examples</li>
                     </ul>
                 </div>
-            </div>
-        </section>
 
-        <section class="section why-calculus">
-            <h2>Why Calculus for Machine Learning?</h2>
-            <p>Calculus is the mathematical foundation of modern machine learning. Understanding calculus deeply allows you to:</p>
-
-            <div class="ml-reasons">
-                <div class="reason">
-                    <h4>🎯 Understand Optimization</h4>
-                    <p>Gradient descent and its variants are calculus in action. You're literally following derivatives to find minima of loss functions.</p>
-                </div>
-                <div class="reason">
-                    <h4>🔄 Master Backpropagation</h4>
-                    <p>The chain rule is the heart of backpropagation. Understanding it deeply lets you design and debug neural networks effectively.</p>
-                </div>
-                <div class="reason">
-                    <h4>📐 Design Better Models</h4>
-                    <p>From understanding activation functions to designing custom loss functions, calculus guides your architectural choices.</p>
-                </div>
-                <div class="reason">
-                    <h4>🔬 Read Research Papers</h4>
-                    <p>Modern ML papers are full of derivatives, gradients, and optimization theory. Solid calculus skills are essential.</p>
+                <div class="module">
+                    <h3><a href="resources.html">8. External Resources</a></h3>
+                    <ul>
+                        <li>Curated textbooks and research papers</li>
+                        <li>Video courses (3Blue1Brown, MIT OCW, Stanford)</li>
+                        <li>Interactive tools and ML playgrounds</li>
+                        <li>Communities and learning platforms</li>
+                    </ul>
                 </div>
             </div>
         </section>
 
         <section class="section">
-            <h2>Interactive Demo: Derivative Visualization</h2>
-            <p>Here's a taste of the interactive visualizations you'll find throughout this course. Explore how derivatives represent the rate of change:</p>
+            <h2>Interactive Demo: Visualizing Derivatives</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                Move the slider to see how the derivative (slope of the tangent line) changes at different points. This is the foundation of gradient descent!
+            </p>
 
             <div class="visualization-container">
-                <div id="derivative-demo"></div>
+                <div id="derivative-demo" style="width: 100%; height: 500px;"></div>
                 <div class="controls">
-                    <label for="x-point">Point x: <span id="x-value">2</span></label>
-                    <input type="range" id="x-point" min="-5" max="5" step="0.1" value="2">
+                    <label>Point: x = <span id="x-value">2.0</span></label>
+                    <input type="range" id="x-point" min="-3" max="3" step="0.1" value="2">
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">
+                        Derivative at x = <span id="derivative-value" class="text-gradient" style="font-weight: 800; font-size: 1.2rem;">0</span>
+                    </p>
                 </div>
             </div>
 
             <div class="explanation">
-                <p>The blue curve shows \( f(x) = x^3 - 3x^2 + 2 \). The red line is the tangent at the selected point, with slope equal to \( f'(x) = 3x^2 - 6x \). Move the slider to see how the derivative (slope) changes!</p>
+                <p><strong>Understanding:</strong> The blue curve shows \( f(x) = x^3 - 3x^2 + 2 \). The red dashed line is the tangent at your selected point. Its slope equals the derivative \( f'(x) = 3x^2 - 6x \).</p>
+                <p><strong>ML Connection:</strong> In gradient descent, we use the derivative to tell us which direction to move to minimize our loss function. If the derivative is positive, we move left (decrease x). If negative, we move right (increase x).</p>
             </div>
         </section>
 
-        <section class="section cta-section">
-            <h2>Ready to Begin?</h2>
-            <p>Start with the fundamentals and work your way to advanced ML applications</p>
+        <section class="section why-calculus">
+            <h2>Why Calculus for Machine Learning?</h2>
+
+            <div class="ml-reasons">
+                <div class="reason">
+                    <h4>🎯 Understand Optimization</h4>
+                    <p>Gradient descent is calculus. You're using derivatives to find the minimum of your loss function. Understand calculus, and optimization makes perfect sense.</p>
+                </div>
+
+                <div class="reason">
+                    <h4>🔄 Master Backpropagation</h4>
+                    <p>Backpropagation is just the chain rule applied systematically. With deep calculus knowledge, you can derive gradients for any architecture.</p>
+                </div>
+
+                <div class="reason">
+                    <h4>📐 Design Custom Models</h4>
+                    <p>Want to create a custom loss function or activation? You need to compute its derivative. Calculus gives you that power.</p>
+                </div>
+
+                <div class="reason">
+                    <h4>🔬 Read Research Papers</h4>
+                    <p>Modern ML papers are filled with gradients, Jacobians, and Hessians. Solid calculus skills make them accessible.</p>
+                </div>
+
+                <div class="reason">
+                    <h4>⚡ Debug Neural Networks</h4>
+                    <p>Vanishing gradients? Exploding gradients? Understanding derivatives helps you diagnose and fix training issues.</p>
+                </div>
+
+                <div class="reason">
+                    <h4>🚀 Advance Your Career</h4>
+                    <p>Whether you're aiming for research or industry, deep mathematical knowledge sets you apart from the crowd.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>What You'll Master</h2>
+            <div class="explanation" style="font-size: 1.1rem;">
+                <p><strong>By the end of this course, you will:</strong></p>
+                <ul style="list-style-position: inside; margin-top: 1rem; line-height: 2;">
+                    <li>✅ Understand derivatives deeply—both intuitively and formally</li>
+                    <li>✅ Implement backpropagation from scratch using only NumPy</li>
+                    <li>✅ Master the chain rule and see exactly why it powers neural networks</li>
+                    <li>✅ Compute gradients, Jacobians, and Hessians confidently</li>
+                    <li>✅ Understand all major optimization algorithms (SGD, Adam, etc.)</li>
+                    <li>✅ Read and understand machine learning research papers</li>
+                    <li>✅ Design custom architectures, loss functions, and optimizers</li>
+                    <li>✅ Debug gradient flow and training issues effectively</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h3>Ready to Transform Your ML Understanding?</h3>
+            <p>Start with the fundamentals or jump straight to applications</p>
             <div class="cta-buttons">
-                <a href="limits.html" class="cta-button">Start with Limits</a>
-                <a href="ml-applications.html" class="cta-button secondary">Jump to ML Applications</a>
+                <a href="limits.html" class="cta-button">Begin with Limits</a>
+                <a href="derivatives.html" class="cta-button">Jump to Derivatives</a>
+                <a href="ml-applications.html" class="cta-button secondary">Explore ML Applications</a>
             </div>
         </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Comprehensive Calculus for ML/DL/DS. An interactive learning resource.</p>
-            <p>Built with ❤️ for aspiring ML researchers</p>
+            <p>&copy; 2024 Calculus for Machine Learning & Deep Learning</p>
+            <p style="margin-top: 0.5rem;">An interactive learning platform for aspiring ML researchers</p>
         </div>
     </footer>
 
@@ -229,5 +298,99 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/visualizations.js"></script>
+    <script>
+        // Interactive derivative visualization
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateVisualization() {
+                const x0 = parseFloat(document.getElementById('x-point').value);
+                document.getElementById('x-value').textContent = x0.toFixed(1);
+
+                // Function and derivative
+                const f = x => Math.pow(x, 3) - 3 * Math.pow(x, 2) + 2;
+                const fprime = x => 3 * Math.pow(x, 2) - 6 * x;
+
+                // Generate curve
+                const xVals = [];
+                for (let x = -3.5; x <= 3.5; x += 0.05) {
+                    xVals.push(x);
+                }
+                const yVals = xVals.map(f);
+
+                // Tangent line
+                const y0 = f(x0);
+                const slope = fprime(x0);
+                document.getElementById('derivative-value').textContent = slope.toFixed(2);
+
+                const tangentX = [x0 - 2, x0 + 2];
+                const tangentY = tangentX.map(x => y0 + slope * (x - x0));
+
+                // Plot
+                const trace1 = {
+                    x: xVals,
+                    y: yVals,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'f(x) = x³ - 3x² + 2',
+                    line: { color: '#667eea', width: 4 }
+                };
+
+                const trace2 = {
+                    x: tangentX,
+                    y: tangentY,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `Tangent (slope = ${slope.toFixed(2)})`,
+                    line: { color: '#f5576c', width: 3, dash: 'dash' }
+                };
+
+                const trace3 = {
+                    x: [x0],
+                    y: [y0],
+                    type: 'scatter',
+                    mode: 'markers',
+                    name: `(${x0.toFixed(1)}, ${y0.toFixed(1)})`,
+                    marker: { color: '#43e97b', size: 16, line: { width: 2, color: '#fff' } }
+                };
+
+                const layout = {
+                    title: {
+                        text: 'Derivative as Slope of Tangent Line',
+                        font: { size: 20, color: '#e4e4e7' }
+                    },
+                    xaxis: {
+                        title: 'x',
+                        zeroline: true,
+                        gridcolor: '#27272a',
+                        color: '#a1a1aa'
+                    },
+                    yaxis: {
+                        title: 'f(x)',
+                        zeroline: true,
+                        gridcolor: '#27272a',
+                        color: '#a1a1aa'
+                    },
+                    plot_bgcolor: '#1a1a2e',
+                    paper_bgcolor: '#1a1a2e',
+                    font: { color: '#e4e4e7' },
+                    showlegend: true,
+                    legend: {
+                        x: 0.02,
+                        y: 0.98,
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        bordercolor: 'rgba(255, 255, 255, 0.1)',
+                        borderwidth: 1
+                    }
+                };
+
+                Plotly.react('derivative-demo', [trace1, trace2, trace3], layout, {
+                    responsive: true,
+                    displayModeBar: false
+                });
+            }
+
+            document.getElementById('x-point').addEventListener('input', updateVisualization);
+            updateVisualization();
+        });
+    </script>
 </body>
 </html>

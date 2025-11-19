@@ -1,22 +1,63 @@
-// Main JavaScript for Calculus Website
+// ============================================
+// PRODUCTION-GRADE INTERACTIVITY
+// Modern Animations & Engagement Features
+// ============================================
 
-// Mobile Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
+    initNavigation();
+    initScrollProgress();
+    initScrollAnimations();
+    initQuizzes();
+    initExercises();
+    initCodeCopy();
+    initTocHighlight();
+});
+
+// ============================================
+// NAVIGATION
+// ============================================
+function initNavigation() {
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
+    const navbar = document.querySelector('.navbar');
 
+    // Mobile menu toggle
     if (hamburger) {
         hamburger.addEventListener('click', function() {
             navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
         });
 
         // Close menu when clicking on a link
         document.querySelectorAll('.nav-menu a').forEach(link => {
             link.addEventListener('click', function() {
                 navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
             });
         });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
     }
+
+    // Navbar scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', function() {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+
+        lastScroll = currentScroll;
+    });
 
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -24,32 +65,82 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                const offsetTop = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
                 });
             }
         });
     });
+}
 
-    // Quiz functionality
-    initializeQuizzes();
+// ============================================
+// SCROLL PROGRESS BAR
+// ============================================
+function initScrollProgress() {
+    // Create progress bar element
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar';
+    document.body.appendChild(progressBar);
 
-    // Exercise solutions toggle
-    initializeExercises();
+    // Update on scroll
+    window.addEventListener('scroll', function() {
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (window.pageYOffset / windowHeight) * 100;
+        progressBar.style.width = scrolled + '%';
+    });
+}
 
-    // Code copy functionality
-    initializeCodeCopy();
-});
+// ============================================
+// SCROLL ANIMATIONS
+// ============================================
+function initScrollAnimations() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
 
-// Quiz System
-function initializeQuizzes() {
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe sections and cards
+    document.querySelectorAll('.section, .feature-card, .module').forEach(el => {
+        el.classList.add('animate-on-scroll');
+        observer.observe(el);
+    });
+}
+
+// ============================================
+// QUIZ SYSTEM
+// ============================================
+function initQuizzes() {
     const quizzes = document.querySelectorAll('.quiz');
 
     quizzes.forEach(quiz => {
         const submitBtn = quiz.querySelector('.submit-quiz');
         const resetBtn = quiz.querySelector('.reset-quiz');
         const questions = quiz.querySelectorAll('.quiz-question');
+
+        // Select option
+        quiz.querySelectorAll('.quiz-options li').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.closest('.quiz-question');
+                const options = question.querySelectorAll('.quiz-options li');
+
+                // Only allow selection if not already submitted
+                if (!this.classList.contains('correct') && !this.classList.contains('incorrect')) {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                }
+            });
+        });
 
         if (submitBtn) {
             submitBtn.addEventListener('click', function() {
@@ -68,10 +159,15 @@ function initializeQuizzes() {
 function checkQuizAnswers(quiz, questions) {
     let correct = 0;
     let total = questions.length;
+    let answered = 0;
 
     questions.forEach(question => {
         const options = question.querySelectorAll('.quiz-options li');
         const selectedOption = question.querySelector('.quiz-options li.selected');
+
+        if (selectedOption) {
+            answered++;
+        }
 
         options.forEach(option => {
             const isCorrect = option.dataset.correct === 'true';
@@ -90,9 +186,49 @@ function checkQuizAnswers(quiz, questions) {
         }
     });
 
-    const resultDiv = quiz.querySelector('.quiz-result') || createResultDiv(quiz);
-    resultDiv.innerHTML = `<strong>Score: ${correct}/${total}</strong> (${Math.round(correct/total * 100)}%)`;
+    // Show results
+    let resultDiv = quiz.querySelector('.quiz-result');
+    if (!resultDiv) {
+        resultDiv = document.createElement('div');
+        resultDiv.className = 'quiz-result';
+        resultDiv.style.marginTop = '2rem';
+        resultDiv.style.padding = '1.5rem';
+        resultDiv.style.background = 'var(--glass-bg)';
+        resultDiv.style.borderRadius = '12px';
+        resultDiv.style.border = '2px solid var(--primary-color)';
+        resultDiv.style.textAlign = 'center';
+        resultDiv.style.fontSize = '1.2rem';
+        resultDiv.style.fontWeight = '700';
+        quiz.appendChild(resultDiv);
+    }
+
+    const percentage = Math.round((correct / total) * 100);
+    let message = '';
+    let color = '';
+
+    if (percentage === 100) {
+        message = '🎉 Perfect! You got all questions correct!';
+        color = 'var(--success-color)';
+    } else if (percentage >= 70) {
+        message = '✅ Great job! You passed!';
+        color = 'var(--success-color)';
+    } else if (percentage >= 50) {
+        message = '📚 Not bad, but review the material.';
+        color = 'var(--warning-color)';
+    } else {
+        message = '🔄 Keep studying! You can do better.';
+        color = 'var(--error-color)';
+    }
+
+    resultDiv.innerHTML = `
+        <div style="color: ${color}; margin-bottom: 1rem;">${message}</div>
+        <div>Score: <span style="color: ${color}">${correct}/${total}</span> (${percentage}%)</div>
+        <div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+            Answered: ${answered}/${total} questions
+        </div>
+    `;
     resultDiv.style.display = 'block';
+    resultDiv.style.animation = 'fadeInUp 0.5s ease';
 
     quiz.querySelector('.submit-quiz').disabled = true;
 }
@@ -114,30 +250,10 @@ function resetQuiz(quiz, questions) {
     quiz.querySelector('.submit-quiz').disabled = false;
 }
 
-function createResultDiv(quiz) {
-    const resultDiv = document.createElement('div');
-    resultDiv.className = 'quiz-result';
-    resultDiv.style.marginTop = '1rem';
-    resultDiv.style.padding = '1rem';
-    resultDiv.style.backgroundColor = '#eff6ff';
-    resultDiv.style.borderRadius = '0.5rem';
-    quiz.appendChild(resultDiv);
-    return resultDiv;
-}
-
-// Add click handlers for quiz options
-document.addEventListener('click', function(e) {
-    if (e.target.matches('.quiz-options li')) {
-        const question = e.target.closest('.quiz-question');
-        question.querySelectorAll('.quiz-options li').forEach(opt => {
-            opt.classList.remove('selected');
-        });
-        e.target.classList.add('selected');
-    }
-});
-
-// Exercise Solutions
-function initializeExercises() {
+// ============================================
+// EXERCISE SOLUTIONS
+// ============================================
+function initExercises() {
     const exercises = document.querySelectorAll('.exercise');
 
     exercises.forEach(exercise => {
@@ -148,27 +264,37 @@ function initializeExercises() {
             showSolutionBtn.addEventListener('click', function() {
                 solution.classList.toggle('visible');
                 this.textContent = solution.classList.contains('visible')
-                    ? 'Hide Solution'
-                    : 'Show Solution';
+                    ? '🔼 Hide Solution'
+                    : '🔽 Show Solution';
+
+                // Smooth scroll to solution if showing
+                if (solution.classList.contains('visible')) {
+                    setTimeout(() => {
+                        solution.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 300);
+                }
             });
         }
     });
 }
 
-// Code Copy Functionality
-function initializeCodeCopy() {
+// ============================================
+// CODE COPY FUNCTIONALITY
+// ============================================
+function initCodeCopy() {
     const codeBlocks = document.querySelectorAll('pre');
 
     codeBlocks.forEach(block => {
         // Create copy button
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-code-btn';
-        copyBtn.textContent = 'Copy';
+        copyBtn.textContent = '📋 Copy';
         copyBtn.style.position = 'absolute';
-        copyBtn.style.top = '0.5rem';
-        copyBtn.style.right = '0.5rem';
-        copyBtn.style.padding = '0.25rem 0.75rem';
-        copyBtn.style.fontSize = '0.75rem';
+        copyBtn.style.top = '1rem';
+        copyBtn.style.right = '1rem';
+        copyBtn.style.padding = '0.5rem 1rem';
+        copyBtn.style.fontSize = '0.85rem';
+        copyBtn.style.zIndex = '10';
 
         // Wrap code block in container
         const container = document.createElement('div');
@@ -177,85 +303,33 @@ function initializeCodeCopy() {
         container.appendChild(block);
         container.appendChild(copyBtn);
 
-        copyBtn.addEventListener('click', async function() {
+        copyBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
             const code = block.querySelector('code')?.textContent || block.textContent;
 
             try {
                 await navigator.clipboard.writeText(code);
-                copyBtn.textContent = 'Copied!';
+                copyBtn.textContent = '✅ Copied!';
+                copyBtn.style.background = 'var(--success-gradient)';
+
                 setTimeout(() => {
-                    copyBtn.textContent = 'Copy';
+                    copyBtn.textContent = '📋 Copy';
+                    copyBtn.style.background = 'var(--glass-bg)';
                 }, 2000);
             } catch (err) {
                 console.error('Failed to copy:', err);
+                copyBtn.textContent = '❌ Failed';
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy';
+                }, 2000);
             }
         });
     });
 }
 
-// Interactive slider handlers (for various visualizations)
-function setupSlider(sliderId, displayId, callback) {
-    const slider = document.getElementById(sliderId);
-    const display = document.getElementById(displayId);
-
-    if (slider && display) {
-        slider.addEventListener('input', function() {
-            display.textContent = this.value;
-            if (callback) callback(parseFloat(this.value));
-        });
-    }
-}
-
-// Utility function for formatting numbers
-function formatNumber(num, decimals = 2) {
-    return Number(num).toFixed(decimals);
-}
-
-// Function to evaluate mathematical expressions (using safe evaluation)
-function evaluateExpression(expr, x) {
-    // This is a simple evaluator - in production, use a proper math library
-    try {
-        const sanitized = expr.replace(/x/g, `(${x})`);
-        return Function(`"use strict"; return (${sanitized})`)();
-    } catch (e) {
-        console.error('Expression evaluation error:', e);
-        return NaN;
-    }
-}
-
-// LaTeX rendering helper (if needed for dynamic content)
-function renderMath() {
-    if (window.MathJax) {
-        MathJax.typesetPromise().catch((err) => console.error('MathJax error:', err));
-    }
-}
-
-// Scroll progress indicator
-function initScrollProgress() {
-    const progressBar = document.createElement('div');
-    progressBar.style.position = 'fixed';
-    progressBar.style.top = '0';
-    progressBar.style.left = '0';
-    progressBar.style.width = '0%';
-    progressBar.style.height = '4px';
-    progressBar.style.backgroundColor = 'var(--primary-color)';
-    progressBar.style.zIndex = '9999';
-    progressBar.style.transition = 'width 0.1s ease';
-    document.body.appendChild(progressBar);
-
-    window.addEventListener('scroll', function() {
-        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrolled = (window.scrollY / windowHeight) * 100;
-        progressBar.style.width = scrolled + '%';
-    });
-}
-
-// Initialize scroll progress on content pages
-if (document.querySelector('.main-content')) {
-    initScrollProgress();
-}
-
-// Table of contents active link highlighting
+// ============================================
+// TABLE OF CONTENTS ACTIVE LINK
+// ============================================
 function initTocHighlight() {
     const tocLinks = document.querySelectorAll('.toc a');
     const sections = document.querySelectorAll('section[id]');
@@ -284,12 +358,145 @@ function initTocHighlight() {
     sections.forEach(section => observer.observe(section));
 }
 
-initTocHighlight();
+// ============================================
+// INTERACTIVE SLIDER HELPERS
+// ============================================
+function setupSlider(sliderId, displayId, callback) {
+    const slider = document.getElementById(sliderId);
+    const display = document.getElementById(displayId);
 
-// Export utilities for use in other scripts
+    if (slider && display) {
+        slider.addEventListener('input', function() {
+            display.textContent = this.value;
+            if (callback) callback(parseFloat(this.value));
+        });
+
+        // Initialize
+        if (callback) callback(parseFloat(slider.value));
+    }
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+function formatNumber(num, decimals = 2) {
+    return Number(num).toFixed(decimals);
+}
+
+function evaluateExpression(expr, x) {
+    try {
+        const sanitized = expr.replace(/x/g, `(${x})`);
+        return Function(`"use strict"; return (${sanitized})`)();
+    } catch (e) {
+        console.error('Expression evaluation error:', e);
+        return NaN;
+    }
+}
+
+function renderMath() {
+    if (window.MathJax) {
+        MathJax.typesetPromise().catch((err) => console.error('MathJax error:', err));
+    }
+}
+
+// ============================================
+// TYPING ANIMATION (for hero sections)
+// ============================================
+function typeWriter(element, text, speed = 50) {
+    let i = 0;
+    element.textContent = '';
+
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+
+    type();
+}
+
+// ============================================
+// PARALLAX SCROLL EFFECT
+// ============================================
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const parallaxElements = document.querySelectorAll('.hero::before');
+
+    parallaxElements.forEach(el => {
+        const speed = 0.5;
+        el.style.transform = `translateY(${scrolled * speed}px)`;
+    });
+});
+
+// ============================================
+// KEYBOARD SHORTCUTS
+// ============================================
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K for search (if search is implemented)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        // Implement search functionality here
+        console.log('Search shortcut pressed');
+    }
+
+    // ESC to close mobile menu
+    if (e.key === 'Escape') {
+        const navMenu = document.querySelector('.nav-menu');
+        const hamburger = document.querySelector('.hamburger');
+        if (navMenu.classList.contains('active')) {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    }
+});
+
+// ============================================
+// DARK MODE TOGGLE (future enhancement)
+// ============================================
+function toggleDarkMode() {
+    document.body.classList.toggle('light-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('light-mode') ? 'false' : 'true');
+}
+
+// Load dark mode preference
+if (localStorage.getItem('darkMode') === 'false') {
+    document.body.classList.add('light-mode');
+}
+
+// ============================================
+// EXPORT UTILITIES
+// ============================================
 window.CalculusUtils = {
     formatNumber,
     evaluateExpression,
     renderMath,
-    setupSlider
+    setupSlider,
+    typeWriter
 };
+
+// ============================================
+// PERFORMANCE OPTIMIZATION
+// ============================================
+// Lazy load images (if any)
+if ('loading' in HTMLImageElement.prototype) {
+    const images = document.querySelectorAll('img[loading="lazy"]');
+    images.forEach(img => {
+        img.src = img.dataset.src;
+    });
+} else {
+    // Fallback for browsers that don't support lazy loading
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js';
+    document.body.appendChild(script);
+}
+
+// Service Worker for offline capability (future enhancement)
+if ('serviceWorker' in navigator) {
+    // Uncomment when ready to implement PWA
+    // navigator.serviceWorker.register('/sw.js');
+}
+
+console.log('%c✨ Calculus for ML/DL/DS ✨', 'color: #667eea; font-size: 20px; font-weight: bold;');
+console.log('%cBuilt with ❤️ for aspiring ML researchers', 'color: #a1a1aa; font-size: 12px;');
