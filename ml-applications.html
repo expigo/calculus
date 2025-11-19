@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Applications - Calculus for ML/DL/DS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><h1>Calculus for ML/DL/DS</h1></div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="derivatives.html">Derivatives</a></li>
+                <li><a href="multivariable.html">Multivariable</a></li>
+                <li><a href="integration.html">Integration</a></li>
+                <li><a href="series.html">Series</a></li>
+                <li><a href="vector-calculus.html">Vector Calculus</a></li>
+                <li><a href="ml-applications.html" class="active">ML Applications</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1>🧠 Machine Learning Applications: Calculus in Action</h1>
+
+        <section class="section">
+            <h2>Introduction</h2>
+            <p>This section brings everything together! We'll see how the calculus concepts you've learned power modern machine learning, deep learning, and data science.</p>
+            
+            <div class="note">
+                <strong>Key Insight:</strong> Machine learning is fundamentally an optimization problem: find parameters that minimize a loss function. Calculus provides the tools to solve this efficiently!
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>1. Backpropagation: The Chain Rule in Action</h2>
+            <p>Backpropagation is how neural networks learn. It's nothing more than the multivariable chain rule applied systematically!</p>
+
+            <h3>The Algorithm</h3>
+            <div class="explanation">
+                <p><strong>Forward Pass:</strong> Compute output layer by layer</p>
+                <ol>
+                    <li>\( \mathbf{z}^{[1]} = \mathbf{W}^{[1]}\mathbf{x} + \mathbf{b}^{[1]} \)</li>
+                    <li>\( \mathbf{a}^{[1]} = \sigma(\mathbf{z}^{[1]}) \)</li>
+                    <li>\( \mathbf{z}^{[2]} = \mathbf{W}^{[2]}\mathbf{a}^{[1]} + \mathbf{b}^{[2]} \)</li>
+                    <li>\( \mathbf{a}^{[2]} = \sigma(\mathbf{z}^{[2]}) \) (output)</li>
+                    <li>\( L = \text{loss}(\mathbf{a}^{[2]}, \mathbf{y}) \)</li>
+                </ol>
+
+                <p><strong>Backward Pass:</strong> Compute gradients using chain rule</p>
+                <p>\[ \frac{\partial L}{\partial \mathbf{W}^{[1]}} = \frac{\partial L}{\partial \mathbf{a}^{[2]}} \cdot \frac{\partial \mathbf{a}^{[2]}}{\partial \mathbf{z}^{[2]}} \cdot \frac{\partial \mathbf{z}^{[2]}}{\partial \mathbf{a}^{[1]}} \cdot \frac{\partial \mathbf{a}^{[1]}}{\partial \mathbf{z}^{[1]}} \cdot \frac{\partial \mathbf{z}^{[1]}}{\partial \mathbf{W}^{[1]}} \]</p>
+            </div>
+
+            <h3>Complete Implementation</h3>
+            <pre><code class="language-python">import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, layer_sizes):
+        """Initialize network with given layer sizes"""
+        self.layers = len(layer_sizes) - 1
+        self.W = []
+        self.b = []
+        
+        for i in range(self.layers):
+            W = np.random.randn(layer_sizes[i+1], layer_sizes[i]) * 0.01
+            b = np.zeros((layer_sizes[i+1], 1))
+            self.W.append(W)
+            self.b.append(b)
+    
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+    
+    def sigmoid_derivative(self, z):
+        s = self.sigmoid(z)
+        return s * (1 - s)
+    
+    def forward(self, X):
+        """
+        Forward propagation
+        Returns: output and cache (for backprop)
+        """
+        cache = {'A': [X]}  # Store activations
+        cache['Z'] = []      # Store pre-activations
+        
+        A = X
+        for i in range(self.layers):
+            Z = self.W[i] @ A + self.b[i]
+            A = self.sigmoid(Z)
+            cache['Z'].append(Z)
+            cache['A'].append(A)
+        
+        return A, cache
+    
+    def backward(self, Y, cache):
+        """
+        Backpropagation - THE CHAIN RULE!
+        """
+        m = Y.shape[1]
+        grads = {'dW': [], 'db': []}
+        
+        # Output layer gradient
+        dA = cache['A'][-1] - Y  # Derivative of MSE loss
+        
+        # Backpropagate through layers
+        for i in reversed(range(self.layers)):
+            # Chain rule: dL/dZ = dL/dA * dA/dZ
+            dZ = dA * self.sigmoid_derivative(cache['Z'][i])
+            
+            # Gradients for weights and biases
+            dW = (1/m) * dZ @ cache['A'][i].T
+            db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
+            
+            grads['dW'].insert(0, dW)
+            grads['db'].insert(0, db)
+            
+            if i > 0:  # Not the first layer
+                # Chain rule: propagate gradient to previous layer
+                dA = self.W[i].T @ dZ
+        
+        return grads
+    
+    def update(self, grads, learning_rate):
+        """Gradient descent update"""
+        for i in range(self.layers):
+            self.W[i] -= learning_rate * grads['dW'][i]
+            self.b[i] -= learning_rate * grads['db'][i]
+    
+    def train(self, X, Y, epochs, learning_rate):
+        """Training loop"""
+        losses = []
+        
+        for epoch in range(epochs):
+            # Forward
+            A, cache = self.forward(X)
+            
+            # Loss
+            loss = np.mean((A - Y)**2)
+            losses.append(loss)
+            
+            # Backward (chain rule!)
+            grads = self.backward(Y, cache)
+            
+            # Update
+            self.update(grads, learning_rate)
+            
+            if epoch % 1000 == 0:
+                print(f"Epoch {epoch}, Loss: {loss:.6f}")
+        
+        return losses
+
+# Test on XOR problem
+X = np.array([[0, 0, 1, 1],
+              [0, 1, 0, 1]])
+Y = np.array([[0, 1, 1, 0]])
+
+nn = NeuralNetwork([2, 4, 1])
+losses = nn.train(X, Y, epochs=10000, learning_rate=0.5)
+
+predictions, _ = nn.forward(X)
+print("\nFinal Predictions:")
+print(predictions)
+print("Targets:", Y)
+</code></pre>
+
+            <div id="backprop-viz" style="height: 400px;"></div>
+        </section>
+
+        <section class="section">
+            <h2>2. Gradient Descent and Variants</h2>
+
+            <h3>Standard Gradient Descent</h3>
+            <p>\[ \theta_{t+1} = \theta_t - \alpha \nabla_\theta L(\theta_t) \]</p>
+
+            <h3>Stochastic Gradient Descent (SGD)</h3>
+            <p>Uses one sample at a time instead of entire batch:</p>
+            <pre><code class="language-python">def sgd(X, y, model, learning_rate, epochs):
+    """Stochastic Gradient Descent"""
+    n_samples = len(X)
+    
+    for epoch in range(epochs):
+        # Shuffle data
+        indices = np.random.permutation(n_samples)
+        
+        for i in indices:
+            # Compute gradient for single sample
+            xi = X[i:i+1]
+            yi = y[i:i+1]
+            
+            # Forward pass
+            pred = model.forward(xi)
+            
+            # Backward pass  (chain rule)
+            grad = model.backward(xi, yi)
+            
+            # Update
+            model.update(grad, learning_rate)
+</code></pre>
+
+            <h3>Momentum</h3>
+            <p>Accumulates past gradients for smoother updates:</p>
+            <p>\[ \mathbf{v}_t = \beta \mathbf{v}_{t-1} + (1-\beta)\nabla L(\theta_t) \]</p>
+            <p>\[ \theta_{t+1} = \theta_t - \alpha \mathbf{v}_t \]</p>
+
+            <pre><code class="language-python">def momentum(X, y, model, learning_rate, beta=0.9, epochs=1000):
+    """Gradient Descent with Momentum"""
+    velocity = [np.zeros_like(W) for W in model.W]
+    
+    for epoch in range(epochs):
+        # Compute gradient
+        pred = model.forward(X)
+        grads = model.backward(X, y)
+        
+        # Update velocity (exponential moving average of gradients)
+        for i in range(len(velocity)):
+            velocity[i] = beta * velocity[i] + (1 - beta) * grads['dW'][i]
+        
+        # Update parameters using velocity
+        for i in range(len(model.W)):
+            model.W[i] -= learning_rate * velocity[i]
+</code></pre>
+
+            <h3>Adam Optimizer</h3>
+            <p>Adaptive learning rates for each parameter:</p>
+
+            <pre><code class="language-python">def adam(X, y, model, learning_rate=0.001, beta1=0.9, beta2=0.999, 
+         epsilon=1e-8, epochs=1000):
+    """Adam optimizer (state-of-the-art!)"""
+    m = [np.zeros_like(W) for W in model.W]  # First moment
+    v = [np.zeros_like(W) for W in model.W]  # Second moment
+    
+    for t in range(1, epochs + 1):
+        # Compute gradient
+        pred = model.forward(X)
+        grads = model.backward(X, y)
+        
+        for i in range(len(model.W)):
+            # Update biased first moment estimate
+            m[i] = beta1 * m[i] + (1 - beta1) * grads['dW'][i]
+            
+            # Update biased second raw moment estimate
+            v[i] = beta2 * v[i] + (1 - beta2) * (grads['dW'][i]**2)
+            
+            # Bias correction
+            m_hat = m[i] / (1 - beta1**t)
+            v_hat = v[i] / (1 - beta2**t)
+            
+            # Update parameters
+            model.W[i] -= learning_rate * m_hat / (np.sqrt(v_hat) + epsilon)
+</code></pre>
+
+            <div id="optimizers-comparison" style="height: 400px;"></div>
+        </section>
+
+        <section class="section">
+            <h2>3. Loss Functions and Their Derivatives</h2>
+
+            <h3>Mean Squared Error (MSE)</h3>
+            <p>\[ L = \frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2 \]</p>
+            <p>\[ \frac{\partial L}{\partial \hat{y}_i} = \frac{2}{n}(\hat{y}_i - y_i) \]</p>
+
+            <h3>Cross-Entropy Loss</h3>
+            <p>For binary classification:</p>
+            <p>\[ L = -\frac{1}{n}\sum_{i=1}^n [y_i \log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)] \]</p>
+            <p>\[ \frac{\partial L}{\partial \hat{y}_i} = -\frac{y_i}{\hat{y}_i} + \frac{1-y_i}{1-\hat{y}_i} \]</p>
+
+            <p>For multi-class (with softmax):</p>
+            <p>\[ L = -\sum_{i=1}^n \sum_{c=1}^C y_{i,c} \log(\hat{y}_{i,c}) \]</p>
+
+            <pre><code class="language-python">def cross_entropy_loss(y_true, y_pred):
+    """
+    Cross-entropy loss for binary classification
+    """
+    epsilon = 1e-15  # Avoid log(0)
+    y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+    return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+
+def cross_entropy_gradient(y_true, y_pred):
+    """
+    Gradient of cross-entropy
+    """
+    epsilon = 1e-15
+    y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
+    return -(y_true / y_pred - (1 - y_true) / (1 - y_pred))
+
+# Softmax + Cross-Entropy (very common!)
+def softmax(z):
+    """Numerically stable softmax"""
+    exp_z = np.exp(z - np.max(z, axis=0, keepdims=True))
+    return exp_z / np.sum(exp_z, axis=0, keepdims=True)
+
+def softmax_cross_entropy_gradient(y_true, z):
+    """
+    Beautiful simplification: gradient is just (y_pred - y_true)!
+    """
+    y_pred = softmax(z)
+    return y_pred - y_true
+</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>4. Regularization</h2>
+
+            <h3>L2 Regularization (Ridge)</h3>
+            <p>\[ L_{total} = L_{data} + \frac{\lambda}{2}\sum_{i} w_i^2 \]</p>
+            <p>\[ \frac{\partial L_{total}}{\partial w_i} = \frac{\partial L_{data}}{\partial w_i} + \lambda w_i \]</p>
+
+            <h3>L1 Regularization (Lasso)</h3>
+            <p>\[ L_{total} = L_{data} + \lambda\sum_{i} |w_i| \]</p>
+            <p>\[ \frac{\partial L_{total}}{\partial w_i} = \frac{\partial L_{data}}{\partial w_i} + \lambda \cdot \text{sign}(w_i) \]</p>
+
+            <pre><code class="language-python">class RegularizedNet:
+    def __init__(self, layer_sizes, l2_lambda=0.01):
+        self.net = NeuralNetwork(layer_sizes)
+        self.l2_lambda = l2_lambda
+    
+    def backward_with_l2(self, Y, cache):
+        """Backprop with L2 regularization"""
+        grads = self.net.backward(Y, cache)
+        
+        # Add L2 gradient: λ * W
+        for i in range(len(grads['dW'])):
+            grads['dW'][i] += self.l2_lambda * self.net.W[i]
+        
+        return grads
+</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>5. Convex Optimization</h2>
+
+            <div class="theorem">
+                <h4>Convex Function</h4>
+                <p>A function \( f \) is convex if for all \( x, y \) and \( \lambda \in [0, 1] \):</p>
+                <p>\[ f(\lambda x + (1-\lambda)y) \leq \lambda f(x) + (1-\lambda)f(y) \]</p>
+            </div>
+
+            <div class="note">
+                <strong>Why This Matters:</strong>
+                <ul>
+                    <li>Convex functions have a unique global minimum</li>
+                    <li>Gradient descent is guaranteed to converge</li>
+                    <li>Linear regression, logistic regression, SVMs are convex!</li>
+                    <li>Neural networks are NOT convex (but still work well in practice)</li>
+                </ul>
+            </div>
+
+            <h3>Checking Convexity with the Hessian</h3>
+            <p>A twice-differentiable function is convex if and only if its Hessian is positive semi-definite everywhere.</p>
+
+            <pre><code class="language-python">def is_convex(f, domain, samples=100):
+    """
+    Check if function is convex by testing Hessian
+    """
+    import numpy as np
+    from scipy.linalg import eigvals
+    
+    # Sample random points
+    points = np.random.uniform(domain[0], domain[1], (samples, 2))
+    
+    for point in points:
+        H = numerical_hessian(f, point)
+        eigenvalues = eigvals(H)
+        
+        if np.any(eigenvalues < -1e-6):  # Allow small numerical errors
+            return False, f"Negative eigenvalue at {point}"
+    
+    return True, "Function appears convex (Hessian is PSD)"
+
+# Test: f(x,y) = x^2 + y^2 (convex)
+f_convex = lambda x: x[0]**2 + x[1]**2
+print(is_convex(f_convex, domain=(-10, 10)))
+
+# Test: f(x,y) = x^2 - y^2 (NOT convex - saddle point)
+f_saddle = lambda x: x[0]**2 - x[1]**2
+print(is_convex(f_saddle, domain=(-10, 10)))
+</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>6. Second-Order Optimization</h2>
+
+            <h3>Newton's Method</h3>
+            <p>Uses both gradient and Hessian for faster convergence:</p>
+            <p>\[ \theta_{t+1} = \theta_t - H^{-1}\nabla L(\theta_t) \]</p>
+
+            <pre><code class="language-python">def newtons_method(f, grad_f, hessian_f, x0, tol=1e-6, max_iter=100):
+    """
+    Newton's method for optimization
+    Converges much faster than gradient descent (quadratic convergence!)
+    """
+    x = x0.copy()
+    history = [x.copy()]
+    
+    for i in range(max_iter):
+        grad = grad_f(x)
+        H = hessian_f(x)
+        
+        # Newton step
+        try:
+            delta = np.linalg.solve(H, grad)
+            x = x - delta
+        except np.linalg.LinAlgError:
+            print("Singular Hessian! Switching to gradient descent.")
+            delta = grad
+            x = x - 0.1 * delta
+        
+        history.append(x.copy())
+        
+        if np.linalg.norm(grad) < tol:
+            break
+    
+    return np.array(history)
+
+# Example: Rosenbrock function
+def rosenbrock(x):
+    return (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
+
+def rosenbrock_grad(x):
+    return np.array([
+        -2*(1 - x[0]) - 400*x[0]*(x[1] - x[0]**2),
+        200*(x[1] - x[0]**2)
+    ])
+
+def rosenbrock_hessian(x):
+    return np.array([
+        [2 - 400*x[1] + 1200*x[0]**2, -400*x[0]],
+        [-400*x[0], 200]
+    ])
+
+x0 = np.array([0.0, 0.0])
+history = newtons_method(rosenbrock, rosenbrock_grad, rosenbrock_hessian, x0)
+
+print(f"Converged in {len(history)} iterations")
+print(f"Final point: {history[-1]}")
+print(f"Optimum is at (1, 1)")
+</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>7. Complete Deep Learning Example</h2>
+
+            <h3>MNIST Digit Classification</h3>
+            <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+
+# Define network
+class ConvNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 32, 3)
+        self.conv2 = nn.Conv2d(32, 64, 3)
+        self.fc1 = nn.Linear(64 * 5 * 5, 128)
+        self.fc2 = nn.Linear(128, 10)
+        
+    def forward(self, x):
+        # All of these use the chain rule in backprop!
+        x = torch.relu(self.conv1(x))
+        x = torch.max_pool2d(x, 2)
+        x = torch.relu(self.conv2(x))
+        x = torch.max_pool2d(x, 2)
+        x = x.view(-1, 64 * 5 * 5)
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Training loop
+def train(model, train_loader, optimizer, epoch):
+    model.train()
+    for batch_idx, (data, target) in enumerate(train_loader):
+        # Zero gradients
+        optimizer.zero_grad()
+        
+        # Forward pass
+        output = model(data)
+        
+        # Compute loss
+        loss = nn.functional.cross_entropy(output, target)
+        
+        # Backward pass (CHAIN RULE - automatic!)
+        loss.backward()
+        
+        # Update parameters (gradient descent)
+        optimizer.step()
+        
+        if batch_idx % 100 == 0:
+            print(f'Epoch {epoch}, Batch {batch_idx}, Loss: {loss.item():.6f}')
+
+# Load data
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])
+
+train_dataset = datasets.MNIST('./data', train=True, download=True, transform=transform)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+
+# Create model and optimizer
+model = ConvNet()
+optimizer = optim.Adam(model.parameters(), lr=0.001)  # Using Adam!
+
+# Train
+for epoch in range(5):
+    train(model, train_loader, optimizer, epoch)
+</code></pre>
+        </section>
+
+        <section class="section">
+            <h2>8. Advanced Topics</h2>
+
+            <h3>Batch Normalization</h3>
+            <p>Normalizes activations to have mean 0 and variance 1:</p>
+            <p>\[ \hat{x}_i = \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} \]</p>
+            <p>Derivative requires chain rule through mean and variance!</p>
+
+            <h3>Dropout</h3>
+            <p>During training, randomly set activations to 0 with probability \( p \). During backprop, gradients only flow through active units.</p>
+
+            <h3>Attention Mechanisms</h3>
+            <p>Softmax attention:</p>
+            <p>\[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]</p>
+            <p>Computing gradients requires chain rule through softmax and matrix multiplications!</p>
+
+            <h3>GANs (Generative Adversarial Networks)</h3>
+            <p>Min-max game between generator \( G \) and discriminator \( D \):</p>
+            <p>\[ \min_G \max_D \mathbb{E}_{x \sim p_{data}}[\log D(x)] + \mathbb{E}_{z \sim p_z}[\log(1 - D(G(z)))] \]</p>
+            <p>Requires computing gradients for both networks simultaneously!</p>
+        </section>
+
+        <div class="cta-section">
+            <h3>Keep Learning!</h3>
+            <p>You now understand the calculus behind modern machine learning. The next step is practice!</p>
+            <a href="resources.html" class="cta-button">Explore More Resources →</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container"><p>&copy; 2024 Comprehensive Calculus for ML/DL/DS</p></div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Visualize loss over training
+            const epochs = Array.from({length: 100}, (_, i) => i);
+            const loss = epochs.map(e => Math.exp(-e/20) + 0.1);
+            
+            Plotly.newPlot('backprop-viz', [{
+                x: epochs,
+                y: loss,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Training Loss',
+                line: {color: '#2563eb', width: 3}
+            }], {
+                title: 'Training Loss Decreases (Thanks to Calculus!)',
+                xaxis: {title: 'Epoch'},
+                yaxis: {title: 'Loss', type: 'log'}
+            }, {responsive: true});
+
+            // Optimizer comparison
+            const iters = Array.from({length: 50}, (_, i) => i);
+            const sgd_loss = iters.map(i => Math.exp(-i/15) + 0.1);
+            const momentum_loss = iters.map(i => Math.exp(-i/10) + 0.1);
+            const adam_loss = iters.map(i => Math.exp(-i/8) + 0.1);
+
+            Plotly.newPlot('optimizers-comparison', [
+                {x: iters, y: sgd_loss, type: 'scatter', mode: 'lines', name: 'SGD', line: {color: '#ef4444'}},
+                {x: iters, y: momentum_loss, type: 'scatter', mode: 'lines', name: 'Momentum', line: {color: '#10b981'}},
+                {x: iters, y: adam_loss, type: 'scatter', mode: 'lines', name: 'Adam', line: {color: '#2563eb'}}
+            ], {
+                title: 'Optimizer Comparison',
+                xaxis: {title: 'Iteration'},
+                yaxis: {title: 'Loss', type: 'log'}
+            }, {responsive: true});
+        });
+    </script>
+</body>
+</html>

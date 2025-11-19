@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multivariable Calculus - Calculus for ML/DL/DS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><h1>Calculus for ML/DL/DS</h1></div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="derivatives.html">Derivatives</a></li>
+                <li><a href="multivariable.html" class="active">Multivariable</a></li>
+                <li><a href="integration.html">Integration</a></li>
+                <li><a href="series.html">Series</a></li>
+                <li><a href="vector-calculus.html">Vector Calculus</a></li>
+                <li><a href="ml-applications.html">ML Applications</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1>Multivariable Calculus: The Mathematics of Deep Learning</h1>
+
+        <section class="section">
+            <h2>Introduction</h2>
+            <p>Multivariable calculus extends derivatives and integrals to functions of multiple variables. This is <strong>absolutely essential</strong> for machine learning because:</p>
+            <div class="note">
+                <ul>
+                    <li><strong>Neural networks</strong> have millions of parameters — all optimized simultaneously</li>
+                    <li><strong>Loss functions</strong> depend on all parameters: \( L(\mathbf{w}, \mathbf{b}) \)</li>
+                    <li><strong>Gradients</strong> generalize derivatives to multiple dimensions</li>
+                    <li><strong>Hessians</strong> capture second-order information for advanced optimization</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Partial Derivatives</h2>
+            <div class="theorem">
+                <h4>Definition: Partial Derivative</h4>
+                <p>For a function \( f(x, y) \), the partial derivatives are:</p>
+                <p>\[ \frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h} \]</p>
+                <p>\[ \frac{\partial f}{\partial y} = \lim_{h \to 0} \frac{f(x, y+h) - f(x, y)}{h} \]</p>
+            </div>
+            <p><strong>Interpretation:</strong> Partial derivative w.r.t. \(x\) measures how \(f\) changes when only \(x\) varies (keeping \(y\) fixed).</p>
+            
+            <div class="explanation">
+                <p><strong>Example:</strong> For \( f(x, y) = x^2y + 3xy^2 \)</p>
+                <p>\[ \frac{\partial f}{\partial x} = 2xy + 3y^2 \quad \text{(treat } y \text{ as constant)} \]</p>
+                <p>\[ \frac{\partial f}{\partial y} = x^2 + 6xy \quad \text{(treat } x \text{ as constant)} \]</p>
+            </div>
+
+            <div id="partial-deriv-viz" style="height: 400px;"></div>
+        </section>
+
+        <section class="section">
+            <h2>Gradient Vector</h2>
+            <div class="theorem">
+                <h4>Definition: Gradient</h4>
+                <p>The gradient of \( f: \mathbb{R}^n \to \mathbb{R} \) is the vector of all partial derivatives:</p>
+                <p>\[ \nabla f = \begin{bmatrix} \frac{\partial f}{\partial x_1} \\ \frac{\partial f}{\partial x_2} \\ \vdots \\ \frac{\partial f}{\partial x_n} \end{bmatrix} \]</p>
+            </div>
+
+            <div class="note">
+                <strong>🎯 ML Connection:</strong> The gradient \( \nabla_\theta L(\theta) \) points in the direction of steepest <em>increase</em> of the loss. Gradient descent moves in the opposite direction: \( \theta \leftarrow \theta - \alpha \nabla_\theta L \)
+            </div>
+
+            <h3>Properties of the Gradient</h3>
+            <ul>
+                <li><strong>Direction:</strong> Points in direction of steepest ascent</li>
+                <li><strong>Magnitude:</strong> Rate of increase in that direction</li>
+                <li><strong>Perpendicular to level curves:</strong> Gradient is always perpendicular to contours</li>
+            </ul>
+
+            <div id="gradient-field-viz" style="height: 400px;"></div>
+
+            <div class="explanation">
+                <p><strong>Example:</strong> For \( f(x, y) = x^2 + y^2 \) (a paraboloid):</p>
+                <p>\[ \nabla f = \begin{bmatrix} 2x \\ 2y \end{bmatrix} \]</p>
+                <p>At point \((1, 2)\): \( \nabla f(1, 2) = \begin{bmatrix} 2 \\ 4 \end{bmatrix} \)</p>
+                <p>This vector points away from the origin (the minimum)!</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Jacobian Matrix</h2>
+            <p>When we have a vector-valued function \( \mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m \), we need the Jacobian:</p>
+
+            <div class="theorem">
+                <h4>Definition: Jacobian</h4>
+                <p>\[ J = \begin{bmatrix}
+                \frac{\partial f_1}{\partial x_1} & \frac{\partial f_1}{\partial x_2} & \cdots & \frac{\partial f_1}{\partial x_n} \\
+                \frac{\partial f_2}{\partial x_1} & \frac{\partial f_2}{\partial x_2} & \cdots & \frac{\partial f_2}{\partial x_n} \\
+                \vdots & \vdots & \ddots & \vdots \\
+                \frac{\partial f_m}{\partial x_1} & \frac{\partial f_m}{\partial x_2} & \cdots & \frac{\partial f_m}{\partial x_n}
+                \end{bmatrix} \]</p>
+            </div>
+
+            <div class="note">
+                <strong>ML Application:</strong> In a neural network layer \( \mathbf{y} = \mathbf{W}\mathbf{x} + \mathbf{b} \), the Jacobian \( \frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \mathbf{W} \). The Jacobian appears everywhere in backpropagation!
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Hessian Matrix</h2>
+            <p>The Hessian contains all second-order partial derivatives:</p>
+
+            <div class="theorem">
+                <h4>Definition: Hessian</h4>
+                <p>\[ H = \begin{bmatrix}
+                \frac{\partial^2 f}{\partial x_1^2} & \frac{\partial^2 f}{\partial x_1 \partial x_2} & \cdots \\
+                \frac{\partial^2 f}{\partial x_2 \partial x_1} & \frac{\partial^2 f}{\partial x_2^2} & \cdots \\
+                \vdots & \vdots & \ddots
+                \end{bmatrix} \]</p>
+            </div>
+
+            <div class="note">
+                <strong>ML Applications:</strong>
+                <ul>
+                    <li><strong>Newton's Method:</strong> Uses Hessian for second-order optimization</li>
+                    <li><strong>Curvature Information:</strong> Eigenvalues tell us about the loss landscape shape</li>
+                    <li><strong>Saddle Points:</strong> Hessian helps distinguish minima from maxima from saddle points</li>
+                </ul>
+            </div>
+
+            <div class="explanation">
+                <p><strong>Example:</strong> For \( f(x, y) = x^2 + xy + y^2 \)</p>
+                <p>\[ H = \begin{bmatrix} 2 & 1 \\ 1 & 2 \end{bmatrix} \]</p>
+                <p>Both eigenvalues are positive → function is convex → gradient descent will converge!</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Chain Rule in Multiple Dimensions</h2>
+            <p>This is the mathematical foundation of backpropagation!</p>
+
+            <div class="theorem">
+                <h4>Multivariable Chain Rule</h4>
+                <p>If \( z = f(x, y) \), \( x = g(t) \), and \( y = h(t) \), then:</p>
+                <p>\[ \frac{dz}{dt} = \frac{\partial f}{\partial x}\frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt} \]</p>
+            </div>
+
+            <div class="note">
+                <strong>Backpropagation Example:</strong>
+                <p>Consider: Input \( x \) → Layer 1 \( z_1 = \sigma(w_1 x) \) → Layer 2 \( z_2 = \sigma(w_2 z_1) \) → Loss \( L \)</p>
+                <p>To find \( \frac{\partial L}{\partial w_1} \):</p>
+                <p>\[ \frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial z_2} \cdot \frac{\partial z_2}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_1} \]</p>
+                <p>This is the chain rule! We compute it backward from loss to parameters.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Python Examples</h2>
+
+            <h3>Computing Gradients with NumPy</h3>
+            <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+def numerical_gradient(f, x, h=1e-5):
+    """
+    Compute gradient numerically using finite differences.
+    f: function R^n -> R
+    x: point (numpy array)
+    Returns: gradient vector
+    """
+    grad = np.zeros_like(x)
+    for i in range(len(x)):
+        x_plus = x.copy()
+        x_minus = x.copy()
+        x_plus[i] += h
+        x_minus[i] -= h
+        grad[i] = (f(x_plus) - f(x_minus)) / (2 * h)
+    return grad
+
+# Example: f(x,y) = x^2 + y^2
+f = lambda x: x[0]**2 + x[1]**2
+point = np.array([3.0, 4.0])
+grad = numerical_gradient(f, point)
+print(f"Gradient at {point}: {grad}")  # Should be [6, 8]
+
+# Verify with exact gradient
+exact_grad = 2 * point
+print(f"Exact gradient: {exact_grad}")
+print(f"Error: {np.linalg.norm(grad - exact_grad)}")
+</code></pre>
+
+            <h3>Gradient Descent in 2D</h3>
+            <pre><code class="language-python">def gradient_descent_2d(f, grad_f, x0, lr=0.1, iters=100):
+    """
+    2D gradient descent visualization
+    """
+    x = x0.copy()
+    history = [x.copy()]
+    
+    for _ in range(iters):
+        grad = grad_f(x)
+        x = x - lr * grad
+        history.append(x.copy())
+    
+    return np.array(history)
+
+# Rosenbrock function (challenging non-convex function)
+rosenbrock = lambda x: (1 - x[0])**2 + 100*(x[1] - x[0]**2)**2
+rosenbrock_grad = lambda x: np.array([
+    -2*(1 - x[0]) - 400*x[0]*(x[1] - x[0]**2),
+    200*(x[1] - x[0]**2)
+])
+
+# Run gradient descent
+x0 = np.array([-1.0, 1.0])
+history = gradient_descent_2d(rosenbrock, rosenbrock_grad, x0, lr=0.001, iters=10000)
+
+print(f"Start: {history[0]}, Loss: {rosenbrock(history[0]):.6f}")
+print(f"End: {history[-1]}, Loss: {rosenbrock(history[-1]):.6f}")
+print(f"Optimum is at (1, 1)")
+</code></pre>
+
+            <h3>Using PyTorch for Automatic Gradients</h3>
+            <pre><code class="language-python">import torch
+
+# Define function
+def f(x):
+    return x[0]**2 + x[1]**2 + x[0]*x[1]
+
+# Point where we want gradient
+x = torch.tensor([2.0, 3.0], requires_grad=True)
+
+# Compute function value
+y = f(x)
+
+# Compute gradient automatically!
+y.backward()
+
+print(f"Point: {x.detach().numpy()}")
+print(f"Function value: {y.item()}")
+print(f"Gradient: {x.grad.numpy()}")
+
+# Verify: gradient should be [2x + y, 2y + x] = [7, 8]
+print(f"Expected: {[2*2 + 3, 2*3 + 2]}")
+</code></pre>
+
+            <h3>Hessian Computation</h3>
+            <pre><code class="language-python">def numerical_hessian(f, x, h=1e-5):
+    """
+    Compute Hessian matrix numerically
+    """
+    n = len(x)
+    H = np.zeros((n, n))
+    
+    for i in range(n):
+        for j in range(n):
+            x_pp = x.copy()
+            x_pm = x.copy()
+            x_mp = x.copy()
+            x_mm = x.copy()
+            
+            x_pp[i] += h; x_pp[j] += h
+            x_pm[i] += h; x_pm[j] -= h
+            x_mp[i] -= h; x_mp[j] += h
+            x_mm[i] -= h; x_mm[j] -= h
+            
+            H[i,j] = (f(x_pp) - f(x_pm) - f(x_mp) + f(x_mm)) / (4 * h**2)
+    
+    return H
+
+# Test on quadratic function
+f = lambda x: x[0]**2 + x[0]*x[1] + 2*x[1]**2
+point = np.array([1.0, 1.0])
+H = numerical_hessian(f, point)
+
+print("Hessian:")
+print(H)
+print("\nEigenvalues:", np.linalg.eigvals(H))
+print("All positive → function is convex")
+</code></pre>
+        </section>
+
+        <div class="cta-section">
+            <h3>Next: ML Applications</h3>
+            <p>See how these concepts power modern machine learning algorithms!</p>
+            <a href="ml-applications.html" class="cta-button">Explore ML Applications →</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container"><p>&copy; 2024 Comprehensive Calculus for ML/DL/DS</p></div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/visualizations.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 3D surface for partial derivatives
+            CalcVisualizations.create3DSurfacePlot(
+                'partial-deriv-viz',
+                (x, y) => x*x + y*y,
+                'f(x,y) = x² + y²'
+            );
+
+            // Contour plot with gradient field
+            CalcVisualizations.createContourPlot(
+                'gradient-field-viz',
+                (x, y) => x*x + y*y,
+                'Gradient Field and Contours'
+            );
+        });
+    </script>
+</body>
+</html>

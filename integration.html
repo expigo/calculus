@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Integration - Calculus for ML/DL/DS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo"><h1>Calculus for ML/DL/DS</h1></div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="derivatives.html">Derivatives</a></li>
+                <li><a href="multivariable.html">Multivariable</a></li>
+                <li><a href="integration.html" class="active">Integration</a></li>
+                <li><a href="series.html">Series</a></li>
+                <li><a href="vector-calculus.html">Vector Calculus</a></li>
+                <li><a href="ml-applications.html">ML Applications</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+        </div>
+    </nav>
+    <main class="container">
+        <h1>Integration</h1>
+        <section class="section">
+            <h2>ML Applications</h2>
+            <ul>
+                <li><strong>Probability:</strong> PDF integration gives probabilities</li>
+                <li><strong>Expectation:</strong> \( \mathbb{E}[X] = \int x p(x) dx \)</li>
+                <li><strong>KL Divergence:</strong> \( D_{KL}(P||Q) = \int p(x) \log\frac{p(x)}{q(x)} dx \)</li>
+                <li><strong>VAEs:</strong> Use integrals for computing ELBO</li>
+            </ul>
+        </section>
+        <section class="section">
+            <h2>Key Concepts</h2>
+            <h3>Fundamental Theorem of Calculus</h3>
+            <p>\[ \int_a^b f'(x) dx = f(b) - f(a) \]</p>
+            <h3>Common Integrals</h3>
+            <ul>
+                <li>\( \int x^n dx = \frac{x^{n+1}}{n+1} + C \)</li>
+                <li>\( \int e^x dx = e^x + C \)</li>
+                <li>\( \int \frac{1}{x} dx = \ln|x| + C \)</li>
+                <li>\( \int \sin(x) dx = -\cos(x) + C \)</li>
+            </ul>
+        </section>
+        <div class="cta-section">
+            <a href="series.html" class="cta-button">Next: Series →</a>
+        </div>
+    </main>
+</body>
+</html>

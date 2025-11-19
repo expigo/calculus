@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derivatives - Calculus for ML/DL/DS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>Calculus for ML/DL/DS</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="limits.html">Limits</a></li>
+                <li><a href="derivatives.html" class="active">Derivatives</a></li>
+                <li><a href="multivariable.html">Multivariable</a></li>
+                <li><a href="integration.html">Integration</a></li>
+                <li><a href="series.html">Series</a></li>
+                <li><a href="vector-calculus.html">Vector Calculus</a></li>
+                <li><a href="ml-applications.html">ML Applications</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="content-layout">
+            <aside class="toc">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#definition">Definition</a></li>
+                    <li><a href="#rules">Differentiation Rules</a></li>
+                    <li><a href="#chain-rule">Chain Rule</a></li>
+                    <li><a href="#higher-order">Higher-Order Derivatives</a></li>
+                    <li><a href="#automatic-diff">Automatic Differentiation</a></li>
+                    <li><a href="#gradient-descent">Gradient Descent</a></li>
+                    <li><a href="#python">Python Examples</a></li>
+                    <li><a href="#exercises">Exercises</a></li>
+                    <li><a href="#quiz">Quiz</a></li>
+                </ul>
+            </aside>
+
+            <div class="main-content">
+                <h1>Derivatives: The Heart of Deep Learning</h1>
+
+                <section id="introduction" class="section">
+                    <h2>Introduction</h2>
+                    <p>The derivative is perhaps the most important concept in machine learning. Every time a neural network learns, it's computing derivatives. Understanding derivatives deeply is essential for:</p>
+
+                    <div class="note">
+                        <strong>Why Derivatives Matter for ML:</strong>
+                        <ul>
+                            <li><strong>Backpropagation:</strong> The algorithm that trains neural networks is just the chain rule applied repeatedly</li>
+                            <li><strong>Gradient Descent:</strong> Optimization uses derivatives to find parameter values that minimize loss</li>
+                            <li><strong>Understanding Convergence:</strong> Second derivatives tell us about the shape of the loss landscape</li>
+                            <li><strong>Feature Importance:</strong> Derivatives show how sensitive outputs are to inputs</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="definition" class="section">
+                    <h2>Definition of the Derivative</h2>
+
+                    <div class="theorem">
+                        <h4>Definition: Derivative</h4>
+                        <p>The derivative of a function \( f \) at a point \( x \) is defined as:</p>
+                        <p>\[ f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h} \]</p>
+                        <p>provided this limit exists.</p>
+                    </div>
+
+                    <p><strong>Geometric Interpretation:</strong> The derivative \( f'(x) \) represents the slope of the tangent line to the curve \( y = f(x) \) at the point \( (x, f(x)) \).</p>
+
+                    <p><strong>Physical Interpretation:</strong> If \( f(t) \) represents position at time \( t \), then \( f'(t) \) represents velocity (rate of change of position).</p>
+
+                    <p><strong>ML Interpretation:</strong> If \( L(\theta) \) is the loss as a function of parameter \( \theta \), then \( \frac{dL}{d\theta} \) tells us how much the loss changes when we change the parameter — this guides optimization!</p>
+
+                    <div class="visualization-container">
+                        <div id="derivative-slope-viz"></div>
+                        <div class="controls">
+                            <label>Point: x = <span id="slope-x-value">1</span></label>
+                            <input type="range" id="slope-slider" min="-3" max="3" step="0.1" value="1">
+                            <p>Derivative at x = <span id="derivative-value">0</span></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="rules" class="section">
+                    <h2>Differentiation Rules</h2>
+
+                    <div class="theorem">
+                        <h4>Basic Differentiation Rules</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 1rem 0;">
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="text-align: left; padding: 0.5rem;">Function</th>
+                                <th style="text-align: left; padding: 0.5rem;">Derivative</th>
+                                <th style="text-align: left; padding: 0.5rem;">ML Relevance</th>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = c \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = 0 \)</td>
+                                <td style="padding: 0.5rem;">Bias terms</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = x^n \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = nx^{n-1} \)</td>
+                                <td style="padding: 0.5rem;">Polynomial features</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = e^x \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = e^x \)</td>
+                                <td style="padding: 0.5rem;">Exponential models</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = \ln(x) \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = \frac{1}{x} \)</td>
+                                <td style="padding: 0.5rem;">Log loss</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = \sin(x) \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = \cos(x) \)</td>
+                                <td style="padding: 0.5rem;">Periodic features</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.5rem;">\( f(x) = \cos(x) \)</td>
+                                <td style="padding: 0.5rem;">\( f'(x) = -\sin(x) \)</td>
+                                <td style="padding: 0.5rem;">Periodic features</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="theorem">
+                        <h4>Combination Rules</h4>
+                        <ol>
+                            <li><strong>Sum Rule:</strong> \( (f + g)' = f' + g' \)</li>
+                            <li><strong>Constant Multiple Rule:</strong> \( (cf)' = cf' \)</li>
+                            <li><strong>Product Rule:</strong> \( (fg)' = f'g + fg' \)</li>
+                            <li><strong>Quotient Rule:</strong> \( \left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2} \)</li>
+                        </ol>
+                    </div>
+
+                    <div class="explanation">
+                        <p><strong>Example:</strong> Find the derivative of \( f(x) = x^2 e^x \)</p>
+                        <p>Using the product rule:</p>
+                        <p>\[ \begin{align*}
+                        f'(x) &= (x^2)' e^x + x^2 (e^x)' \\
+                        &= 2x e^x + x^2 e^x \\
+                        &= e^x(2x + x^2)
+                        \end{align*} \]</p>
+                    </div>
+                </section>
+
+                <section id="chain-rule" class="section">
+                    <h2>The Chain Rule: Heart of Backpropagation</h2>
+
+                    <div class="theorem">
+                        <h4>Chain Rule</h4>
+                        <p>If \( y = f(u) \) and \( u = g(x) \), then:</p>
+                        <p>\[ \frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx} \]</p>
+                        <p>Or equivalently: \( (f \circ g)'(x) = f'(g(x)) \cdot g'(x) \)</p>
+                    </div>
+
+                    <div class="note">
+                        <strong>🧠 This is Backpropagation!</strong>
+                        <p>In neural networks, the output is a composition of many functions (layers). The chain rule lets us compute how the loss changes with respect to each parameter by multiplying derivatives backward through the network.</p>
+                    </div>
+
+                    <div class="explanation">
+                        <p><strong>Example 1:</strong> Find the derivative of \( h(x) = (x^2 + 1)^5 \)</p>
+                        <p>Let \( u = x^2 + 1 \), so \( h(x) = u^5 \)</p>
+                        <p>\[ \begin{align*}
+                        h'(x) &= \frac{d}{dx}[u^5] = \frac{d}{du}[u^5] \cdot \frac{du}{dx} \\
+                        &= 5u^4 \cdot 2x \\
+                        &= 5(x^2 + 1)^4 \cdot 2x \\
+                        &= 10x(x^2 + 1)^4
+                        \end{align*} \]</p>
+
+                        <p><strong>Example 2: Neural Network Layer</strong></p>
+                        <p>Consider a single neuron: \( y = \sigma(wx + b) \) where \( \sigma \) is sigmoid.</p>
+                        <p>To find \( \frac{dy}{dw} \):</p>
+                        <p>\[ \frac{dy}{dw} = \frac{dy}{d(wx+b)} \cdot \frac{d(wx+b)}{dw} = \sigma'(wx + b) \cdot x \]</p>
+                        <p>This is exactly what backpropagation computes!</p>
+                    </div>
+
+                    <div class="visualization-container">
+                        <div id="chain-rule-viz"></div>
+                    </div>
+
+                    <h3>Multi-Layer Chain Rule</h3>
+                    <p>For a 3-layer network: \( L = f_3(f_2(f_1(x))) \)</p>
+                    <p>\[ \frac{dL}{dx} = \frac{dL}{df_3} \cdot \frac{df_3}{df_2} \cdot \frac{df_2}{df_1} \cdot \frac{df_1}{dx} \]</p>
+                    <p>Each \( \frac{df_i}{df_{i-1}} \) involves the derivative of the activation function — this is why we need differentiable activations!</p>
+                </section>
+
+                <section id="higher-order" class="section">
+                    <h2>Higher-Order Derivatives</h2>
+
+                    <p>The second derivative \( f''(x) \) is the derivative of the derivative. It tells us about the <strong>curvature</strong> of the function.</p>
+
+                    <div class="theorem">
+                        <h4>Concavity Test</h4>
+                        <ul>
+                            <li>If \( f''(x) > 0 \), the function is <strong>concave up</strong> (curves upward)</li>
+                            <li>If \( f''(x) < 0 \), the function is <strong>concave down</strong> (curves downward)</li>
+                            <li>If \( f''(x) = 0 \), we have a possible inflection point</li>
+                        </ul>
+                    </div>
+
+                    <div class="note">
+                        <strong>ML Application: Second-Order Optimization</strong>
+                        <p>The second derivative (or Hessian in multiple dimensions) gives us information about the curvature of the loss landscape:</p>
+                        <ul>
+                            <li><strong>Positive curvature:</strong> We're in a valley — good for optimization!</li>
+                            <li><strong>Negative curvature:</strong> We're on a hill — need to be careful</li>
+                            <li><strong>Newton's Method:</strong> Uses second derivatives for faster convergence</li>
+                        </ul>
+                    </div>
+
+                    <div class="visualization-container">
+                        <div id="second-derivative-viz"></div>
+                    </div>
+
+                    <div class="explanation">
+                        <p><strong>Example:</strong> For \( f(x) = x^3 - 3x^2 + 2 \)</p>
+                        <ul>
+                            <li>First derivative: \( f'(x) = 3x^2 - 6x \)</li>
+                            <li>Second derivative: \( f''(x) = 6x - 6 = 6(x - 1) \)</li>
+                            <li>Concave up when \( x > 1 \) (positive curvature)</li>
+                            <li>Concave down when \( x < 1 \) (negative curvature)</li>
+                            <li>Inflection point at \( x = 1 \)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="automatic-diff" class="section">
+                    <h2>Automatic Differentiation</h2>
+
+                    <p>Modern deep learning frameworks (PyTorch, TensorFlow) use <strong>automatic differentiation</strong> (autodiff) to compute derivatives. Unlike symbolic differentiation or numerical approximation, autodiff is:</p>
+
+                    <ul>
+                        <li><strong>Exact:</strong> No numerical errors like finite differences</li>
+                        <li><strong>Efficient:</strong> Computes derivatives in one backward pass</li>
+                        <li><strong>Automatic:</strong> You don't manually derive gradients</li>
+                    </ul>
+
+                    <h3>Forward Mode vs Reverse Mode</h3>
+                    <div class="explanation">
+                        <p><strong>Forward Mode:</strong> Computes derivatives from inputs to outputs. Good when you have few inputs and many outputs.</p>
+
+                        <p><strong>Reverse Mode (Backpropagation):</strong> Computes derivatives from outputs to inputs. Perfect for neural networks where we have many parameters (inputs) but one loss (output)!</p>
+                    </div>
+
+                    <div class="note">
+                        <strong>Why Reverse Mode for Deep Learning?</strong>
+                        <p>Neural networks typically have millions of parameters but a single scalar loss. Reverse mode autodiff computes gradients for all parameters in one backward pass — much more efficient than forward mode!</p>
+                    </div>
+                </section>
+
+                <section id="gradient-descent" class="section">
+                    <h2>Gradient Descent: Derivatives in Action</h2>
+
+                    <p>Gradient descent is the workhorse algorithm for training neural networks. It uses derivatives to iteratively improve parameters:</p>
+
+                    <p>\[ \theta_{new} = \theta_{old} - \alpha \frac{dL}{d\theta} \]</p>
+
+                    <p>where:</p>
+                    <ul>
+                        <li>\( \theta \) = parameters (weights, biases)</li>
+                        <li>\( L \) = loss function</li>
+                        <li>\( \alpha \) = learning rate (step size)</li>
+                        <li>\( \frac{dL}{d\theta} \) = gradient (direction of steepest ascent)</li>
+                    </ul>
+
+                    <div class="visualization-container">
+                        <div id="gradient-descent-path"></div>
+                        <div class="controls">
+                            <label>Learning Rate: <span id="lr-value">0.1</span></label>
+                            <input type="range" id="lr-slider" min="0.01" max="0.5" step="0.01" value="0.1">
+                            <button id="run-gd">Run Gradient Descent</button>
+                            <button id="reset-gd">Reset</button>
+                        </div>
+                    </div>
+
+                    <h3>Why Does It Work?</h3>
+                    <div class="explanation">
+                        <p>The gradient \( \nabla L \) points in the direction of steepest <em>increase</em> of the loss. By moving in the opposite direction (negative gradient), we move toward lower loss!</p>
+
+                        <p><strong>Taylor approximation explains it:</strong></p>
+                        <p>\[ L(\theta + \Delta\theta) \approx L(\theta) + \nabla L(\theta)^T \Delta\theta \]</p>
+                        <p>To decrease \( L \), we want \( \nabla L(\theta)^T \Delta\theta < 0 \). Choosing \( \Delta\theta = -\alpha \nabla L(\theta) \) guarantees this!</p>
+                    </div>
+
+                    <h3>Variants of Gradient Descent</h3>
+                    <ul>
+                        <li><strong>Batch GD:</strong> Uses all training data — slow but stable</li>
+                        <li><strong>Stochastic GD (SGD):</strong> Uses one sample — fast but noisy</li>
+                        <li><strong>Mini-batch GD:</strong> Uses small batches — best of both worlds</li>
+                        <li><strong>Momentum:</strong> Accumulates past gradients for smoother updates</li>
+                        <li><strong>Adam:</strong> Adaptive learning rates per parameter — very popular!</li>
+                    </ul>
+                </section>
+
+                <section id="python" class="section">
+                    <h2>Python Examples</h2>
+
+                    <h3>Computing Derivatives Numerically</h3>
+                    <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+def numerical_derivative(f, x, h=1e-7):
+    """
+    Compute derivative using finite differences.
+    f'(x) ≈ (f(x+h) - f(x-h)) / (2h)
+    """
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+# Example function
+f = lambda x: x**3 - 3*x**2 + 2
+f_prime_exact = lambda x: 3*x**2 - 6*x  # Exact derivative
+
+# Compare numerical vs exact
+x = 2.0
+numerical = numerical_derivative(f, x)
+exact = f_prime_exact(x)
+
+print(f"Numerical derivative at x={x}: {numerical:.10f}")
+print(f"Exact derivative at x={x}: {exact:.10f}")
+print(f"Error: {abs(numerical - exact):.2e}")
+</code></pre>
+
+                    <h3>Implementing Backpropagation from Scratch</h3>
+                    <pre><code class="language-python">import numpy as np
+
+class SimpleNeuralNet:
+    """
+    Simple 2-layer network: input -> hidden -> output
+    Demonstrates backpropagation (chain rule!)
+    """
+
+    def __init__(self, input_size, hidden_size, output_size):
+        # Initialize weights randomly
+        self.W1 = np.random.randn(input_size, hidden_size) * 0.01
+        self.b1 = np.zeros((1, hidden_size))
+        self.W2 = np.random.randn(hidden_size, output_size) * 0.01
+        self.b2 = np.zeros((1, output_size))
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(self, x):
+        """Derivative of sigmoid: σ'(x) = σ(x)(1 - σ(x))"""
+        s = self.sigmoid(x)
+        return s * (1 - s)
+
+    def forward(self, X):
+        """Forward pass - save intermediates for backprop"""
+        self.z1 = X.dot(self.W1) + self.b1  # Pre-activation
+        self.a1 = self.sigmoid(self.z1)      # Activation
+
+        self.z2 = self.a1.dot(self.W2) + self.b2
+        self.a2 = self.sigmoid(self.z2)      # Output
+
+        return self.a2
+
+    def backward(self, X, y, learning_rate=0.1):
+        """
+        Backpropagation - apply chain rule to compute gradients
+        """
+        m = X.shape[0]  # Number of samples
+
+        # Output layer gradients
+        # dL/dz2 = dL/da2 * da2/dz2
+        dz2 = self.a2 - y  # For MSE loss with sigmoid
+        dW2 = (1/m) * self.a1.T.dot(dz2)
+        db2 = (1/m) * np.sum(dz2, axis=0, keepdims=True)
+
+        # Hidden layer gradients (chain rule!)
+        # dL/dz1 = dL/da2 * da2/dz2 * dz2/da1 * da1/dz1
+        dz1 = dz2.dot(self.W2.T) * self.sigmoid_derivative(self.z1)
+        dW1 = (1/m) * X.T.dot(dz1)
+        db1 = (1/m) * np.sum(dz1, axis=0, keepdims=True)
+
+        # Update weights (gradient descent)
+        self.W1 -= learning_rate * dW1
+        self.b1 -= learning_rate * db1
+        self.W2 -= learning_rate * dW2
+        self.b2 -= learning_rate * db2
+
+    def train(self, X, y, epochs=1000, learning_rate=0.1):
+        """Training loop"""
+        losses = []
+
+        for epoch in range(epochs):
+            # Forward pass
+            output = self.forward(X)
+
+            # Compute loss (MSE)
+            loss = np.mean((output - y)**2)
+            losses.append(loss)
+
+            # Backward pass
+            self.backward(X, y, learning_rate)
+
+            if epoch % 100 == 0:
+                print(f"Epoch {epoch}, Loss: {loss:.6f}")
+
+        return losses
+
+# Example: XOR problem
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([[0], [1], [1], [0]])
+
+# Create and train network
+nn = SimpleNeuralNet(input_size=2, hidden_size=4, output_size=1)
+losses = nn.train(X, y, epochs=5000, learning_rate=0.5)
+
+# Test
+predictions = nn.forward(X)
+print("\nPredictions:")
+print(predictions)
+print("\nTargets:")
+print(y)
+</code></pre>
+
+                    <h3>Using PyTorch Autodiff</h3>
+                    <pre><code class="language-python">import torch
+import torch.nn as nn
+
+# Define a simple function
+x = torch.tensor([2.0], requires_grad=True)
+y = x**3 - 3*x**2 + 2
+
+# Compute gradient automatically
+y.backward()
+
+print(f"x = {x.item()}")
+print(f"y = f(x) = {y.item()}")
+print(f"dy/dx = {x.grad.item()}")
+print(f"Exact: 3x² - 6x = {3*x.item()**2 - 6*x.item()}")
+
+# More complex example: neural network
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Create network and dummy data
+net = Net()
+x = torch.randn(5, 10)  # Batch of 5 samples
+y_true = torch.randn(5, 1)
+
+# Forward pass
+y_pred = net(x)
+loss = ((y_pred - y_true)**2).mean()
+
+# Backward pass - PyTorch computes all gradients!
+loss.backward()
+
+# Check gradients
+for name, param in net.named_parameters():
+    print(f"{name}: gradient shape = {param.grad.shape}")
+</code></pre>
+
+                    <h3>Visualizing Gradient Descent</h3>
+                    <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def visualize_gradient_descent_2d():
+    """
+    Visualize GD on a 2D function
+    """
+    # Define function and gradient
+    f = lambda x: x**2 + 10*np.sin(x)
+    grad_f = lambda x: 2*x + 10*np.cos(x)
+
+    # Gradient descent
+    x = 5.0  # Starting point
+    learning_rate = 0.1
+    history = [x]
+
+    for _ in range(50):
+        x = x - learning_rate * grad_f(x)
+        history.append(x)
+
+    # Plot
+    x_plot = np.linspace(-6, 6, 500)
+    y_plot = f(x_plot)
+
+    plt.figure(figsize=(12, 5))
+
+    # Function and path
+    plt.subplot(1, 2, 1)
+    plt.plot(x_plot, y_plot, 'b-', linewidth=2, label='f(x)')
+    plt.plot(history, [f(x) for x in history],
+             'ro-', markersize=5, label='GD path')
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+    plt.title('Gradient Descent on f(x) = x² + 10sin(x)')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    # Convergence
+    plt.subplot(1, 2, 2)
+    plt.plot([f(x) for x in history], 'g-o', markersize=3)
+    plt.xlabel('Iteration')
+    plt.ylabel('f(x)')
+    plt.title('Function Value Over Time')
+    plt.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
+
+visualize_gradient_descent_2d()
+</code></pre>
+                </section>
+
+                <section id="exercises" class="section">
+                    <h2>Exercises</h2>
+
+                    <div class="exercise">
+                        <h4>Exercise 1: Basic Derivatives</h4>
+                        <p>Find the derivatives of the following functions:</p>
+                        <ol>
+                            <li>\( f(x) = 5x^4 - 3x^2 + 7 \)</li>
+                            <li>\( g(x) = e^{2x} \)</li>
+                            <li>\( h(x) = \ln(x^2 + 1) \)</li>
+                            <li>\( k(x) = \frac{x^2 + 1}{x - 1} \)</li>
+                        </ol>
+                        <button class="show-solution">Show Solution</button>
+                        <div class="solution">
+                            <ol>
+                                <li>\( f'(x) = 20x^3 - 6x \)</li>
+                                <li>\( g'(x) = 2e^{2x} \) (chain rule)</li>
+                                <li>\( h'(x) = \frac{2x}{x^2 + 1} \) (chain rule)</li>
+                                <li>\( k'(x) = \frac{2x(x-1) - (x^2+1)}{(x-1)^2} = \frac{x^2 - 2x - 1}{(x-1)^2} \) (quotient rule)</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="exercise">
+                        <h4>Exercise 2: Chain Rule Practice</h4>
+                        <p>Find the derivatives using the chain rule:</p>
+                        <ol>
+                            <li>\( f(x) = (3x^2 + 2x - 1)^7 \)</li>
+                            <li>\( g(x) = e^{-x^2} \)</li>
+                            <li>\( h(x) = \sin(x^2 + 1) \)</li>
+                            <li>If \( L = (wx + b)^2 \), find \( \frac{dL}{dw} \) and \( \frac{dL}{db} \)</li>
+                        </ol>
+                        <button class="show-solution">Show Solution</button>
+                        <div class="solution">
+                            <ol>
+                                <li>\( f'(x) = 7(3x^2 + 2x - 1)^6 \cdot (6x + 2) \)</li>
+                                <li>\( g'(x) = e^{-x^2} \cdot (-2x) = -2xe^{-x^2} \)</li>
+                                <li>\( h'(x) = \cos(x^2 + 1) \cdot 2x \)</li>
+                                <li>\( \frac{dL}{dw} = 2(wx + b) \cdot x = 2x(wx + b) \)<br>
+                                    \( \frac{dL}{db} = 2(wx + b) \cdot 1 = 2(wx + b) \)</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="exercise">
+                        <h4>Exercise 3: ML Application</h4>
+                        <p>Consider the sigmoid function \( \sigma(x) = \frac{1}{1 + e^{-x}} \):</p>
+                        <ol>
+                            <li>Prove that \( \sigma'(x) = \sigma(x)(1 - \sigma(x)) \)</li>
+                            <li>Why is this formula computationally efficient in neural networks?</li>
+                            <li>For a neuron \( y = \sigma(wx + b) \), find \( \frac{dy}{dw} \)</li>
+                            <li>What happens to \( \sigma'(x) \) when \( x \) is very large or very small? What does this mean for learning?</li>
+                        </ol>
+                        <button class="show-solution">Show Solution</button>
+                        <div class="solution">
+                            <ol>
+                                <li>
+                                    \[ \begin{align*}
+                                    \sigma'(x) &= \frac{d}{dx}\left[\frac{1}{1 + e^{-x}}\right] \\
+                                    &= \frac{0 \cdot (1 + e^{-x}) - 1 \cdot (-e^{-x})}{(1 + e^{-x})^2} \\
+                                    &= \frac{e^{-x}}{(1 + e^{-x})^2} \\
+                                    &= \frac{1}{1 + e^{-x}} \cdot \frac{e^{-x}}{1 + e^{-x}} \\
+                                    &= \frac{1}{1 + e^{-x}} \cdot \frac{(1 + e^{-x}) - 1}{1 + e^{-x}} \\
+                                    &= \sigma(x)(1 - \sigma(x))
+                                    \end{align*} \]
+                                </li>
+                                <li>We already computed \( \sigma(x) \) in the forward pass, so we can reuse it instead of recomputing exponentials!</li>
+                                <li>\( \frac{dy}{dw} = \sigma'(wx + b) \cdot x = \sigma(wx + b)(1 - \sigma(wx + b)) \cdot x \)</li>
+                                <li>When \( |x| \) is large, \( \sigma'(x) \to 0 \) (vanishing gradient problem!). This means neurons with large inputs learn very slowly.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quiz" class="section">
+                    <h2>Quiz</h2>
+
+                    <div class="quiz">
+                        <div class="quiz-question">
+                            <p><strong>Q1:</strong> What does the derivative represent geometrically?</p>
+                            <ul class="quiz-options">
+                                <li data-correct="false">The area under the curve</li>
+                                <li data-correct="true">The slope of the tangent line</li>
+                                <li data-correct="false">The y-intercept</li>
+                                <li data-correct="false">The maximum value</li>
+                            </ul>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>Q2:</strong> Which rule is the foundation of backpropagation?</p>
+                            <ul class="quiz-options">
+                                <li data-correct="false">Product rule</li>
+                                <li data-correct="true">Chain rule</li>
+                                <li data-correct="false">Quotient rule</li>
+                                <li data-correct="false">Power rule</li>
+                            </ul>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>Q3:</strong> If \( f(x) = e^x \), what is \( f'(x) \)?</p>
+                            <ul class="quiz-options">
+                                <li data-correct="false">\( xe^{x-1} \)</li>
+                                <li data-correct="true">\( e^x \)</li>
+                                <li data-correct="false">\( \ln(x) \)</li>
+                                <li data-correct="false">\( 1 \)</li>
+                            </ul>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>Q4:</strong> In gradient descent, why do we subtract the gradient?</p>
+                            <ul class="quiz-options">
+                                <li data-correct="true">The gradient points uphill; we want to go downhill</li>
+                                <li data-correct="false">It's a convention</li>
+                                <li data-correct="false">It makes computation faster</li>
+                                <li data-correct="false">The gradient points downhill</li>
+                            </ul>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>Q5:</strong> What does a second derivative of zero indicate?</p>
+                            <ul class="quiz-options">
+                                <li data-correct="false">A maximum</li>
+                                <li data-correct="false">A minimum</li>
+                                <li data-correct="true">A possible inflection point</li>
+                                <li data-correct="false">The function is constant</li>
+                            </ul>
+                        </div>
+
+                        <button class="submit-quiz">Submit Quiz</button>
+                        <button class="reset-quiz">Reset</button>
+                    </div>
+                </section>
+
+                <div class="cta-section">
+                    <h3>Next: Multivariable Calculus</h3>
+                    <p>Ready to extend these concepts to multiple dimensions? Learn about gradients, Jacobians, and the math behind modern deep learning!</p>
+                    <a href="multivariable.html" class="cta-button">Continue to Multivariable Calculus →</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Comprehensive Calculus for ML/DL/DS</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/visualizations.js"></script>
+    <script>
+        // Page-specific visualizations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Interactive derivative visualization
+            function updateDerivativeViz() {
+                const x0 = parseFloat(document.getElementById('slope-slider').value);
+                document.getElementById('slope-x-value').textContent = x0.toFixed(1);
+
+                const f = x => x**3 - 3*x**2 + 2;
+                const fprime = x => 3*x**2 - 6*x;
+
+                const xVals = [];
+                for (let x = -3; x <= 3; x += 0.05) xVals.push(x);
+                const yVals = xVals.map(f);
+
+                const y0 = f(x0);
+                const slope = fprime(x0);
+                document.getElementById('derivative-value').textContent = slope.toFixed(2);
+
+                const tangentX = [x0 - 1.5, x0 + 1.5];
+                const tangentY = tangentX.map(x => y0 + slope * (x - x0));
+
+                Plotly.react('derivative-slope-viz', [
+                    {x: xVals, y: yVals, type: 'scatter', mode: 'lines', name: 'f(x) = x³ - 3x² + 2', line: {color: '#2563eb', width: 3}},
+                    {x: tangentX, y: tangentY, type: 'scatter', mode: 'lines', name: `Tangent (slope=${slope.toFixed(2)})`, line: {color: '#ef4444', width: 2, dash: 'dash'}},
+                    {x: [x0], y: [y0], type: 'scatter', mode: 'markers', name: 'Point', marker: {color: '#10b981', size: 12}}
+                ], {
+                    title: 'Derivative as Slope of Tangent',
+                    xaxis: {title: 'x', zeroline: true},
+                    yaxis: {title: 'f(x)', zeroline: true}
+                }, {responsive: true});
+            }
+
+            document.getElementById('slope-slider').addEventListener('input', updateDerivativeViz);
+            updateDerivativeViz();
+
+            // Chain rule visualization
+            const xChain = [];
+            for (let x = -3; x <= 3; x += 0.05) xChain.push(x);
+            const inner = xChain.map(x => x**2);
+            const composed = xChain.map(x => Math.exp(x**2));
+
+            Plotly.newPlot('chain-rule-viz', [
+                {x: xChain, y: inner, type: 'scatter', mode: 'lines', name: 'u = x²', line: {color: '#2563eb'}},
+                {x: xChain, y: composed, type: 'scatter', mode: 'lines', name: 'f(u) = e^u, so f(g(x)) = e^(x²)', line: {color: '#ef4444'}}
+            ], {
+                title: 'Chain Rule: f(g(x)) = e^(x²)',
+                xaxis: {title: 'x'},
+                yaxis: {title: 'y'}
+            }, {responsive: true});
+
+            // Second derivative visualization
+            const xSecond = [];
+            for (let x = -1; x <= 3; x += 0.05) xSecond.push(x);
+            const fVals = xSecond.map(x => x**3 - 3*x**2 + 2);
+
+            Plotly.newPlot('second-derivative-viz', [{
+                x: xSecond,
+                y: fVals,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'f(x)',
+                line: {color: '#2563eb', width: 3}
+            }], {
+                title: 'Concavity: f(x) = x³ - 3x² + 2',
+                xaxis: {title: 'x'},
+                yaxis: {title: 'f(x)'},
+                shapes: [
+                    {type: 'line', x0: 1, x1: 1, y0: -5, y1: 5, line: {color: 'green', width: 2, dash: 'dash'}},
+                ],
+                annotations: [
+                    {x: 0.5, y: 2, text: 'Concave down<br>(f" < 0)', showarrow: false},
+                    {x: 2, y: -2, text: 'Concave up<br>(f" > 0)', showarrow: false},
+                    {x: 1, y: -3, text: 'Inflection point<br>(f" = 0)', showarrow: true, arrowhead: 2}
+                ]
+            }, {responsive: true});
+
+            // Gradient descent interactive
+            let gdRunning = false;
+            document.getElementById('run-gd').addEventListener('click', function() {
+                const lr = parseFloat(document.getElementById('lr-slider').value);
+                CalcVisualizations.createGradientDescentVisualization('gradient-descent-path');
+            });
+
+            document.getElementById('lr-slider').addEventListener('input', function() {
+                document.getElementById('lr-value').textContent = this.value;
+            });
+
+            document.getElementById('reset-gd').addEventListener('click', function() {
+                CalcVisualizations.createGradientDescentVisualization('gradient-descent-path');
+            });
+
+            // Initial gradient descent viz
+            CalcVisualizations.createGradientDescentVisualization('gradient-descent-path');
+        });
+    </script>
+</body>
+</html>
